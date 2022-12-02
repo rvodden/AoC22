@@ -12,3 +12,5 @@ target_link_libraries(
     day_2a
     lib_day_2a
 )
+
+gtest_discover_tests(day_2a_test)

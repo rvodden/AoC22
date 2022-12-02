@@ -3,7 +3,7 @@
 
 #include "day_1a.hpp"
 
-std::string example = R"EOS(1000
+const std::string example = R"EOS(1000
 2000
 3000
 

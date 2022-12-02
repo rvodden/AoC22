@@ -1,13 +1,14 @@
-#include "day_1a.hpp"
+#include "day_1b.hpp"
 
 #include <sstream>
 #include <vector>
 
 namespace aoc {
 
-const static std::string delimiter = "\n\n";
+static const std::string delimiter = "\n\n";
 
-int CalorieCounter::day_1(std::string report) const{
+int CalorieCounter::day_1(std::string report) {
+
     size_t pos = 0;
     std::string calorie_list;
     std::stringstream stream;

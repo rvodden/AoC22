@@ -7,9 +7,9 @@
 
 namespace aoc {
 
-static std::string delimiter = "\n\n";
+static const std::string delimiter = "\n\n";
 
-int CalorieCounter::day_1(std::string report) {
+int CalorieCounter::day_1 (std::string report) const {
     size_t pos = 0;
     std::string calorie_list;
     std::stringstream stream;
