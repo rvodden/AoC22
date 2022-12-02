@@ -3,8 +3,7 @@ project(advent_of_code_2022)
 
 cmake_policy(SET CMP0135 NEW)
 
-# GoogleTest requires at least C++14
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -15,3 +14,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 add_subdirectory(day_1a)
+add_subdirectory(day_1b)
+add_subdirectory(day_2a)
+add_subdirectory(day_2b)

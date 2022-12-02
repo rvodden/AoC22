@@ -8,7 +8,6 @@ namespace aoc {
 static std::string delimiter = "\n\n";
 
 int CalorieCounter::day_1(std::string report) {
-
     size_t pos = 0;
     std::string calorie_list;
     std::stringstream stream;
