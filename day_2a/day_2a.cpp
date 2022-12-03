@@ -23,14 +23,11 @@ int day_2a(const std::string &strategy) {
     std::string line;
 
     int score = 0;
-    int rounds = 0;
 
     while(std::getline(ss, line)) {
         score += scores.at(line);
-        rounds++;
     }
 
-    std::cout << rounds << std::endl;
     return score;
 }
 

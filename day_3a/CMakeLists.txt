@@ -10,7 +10,11 @@ target_link_libraries(
 
 target_link_libraries(
     day_3a
+    lib_common
     lib_day_3a
 )
 
 gtest_discover_tests(day_3a_test)
+
+add_test(NAME day_3a COMMAND day_3a ${CMAKE_CURRENT_LIST_DIR}/input.txt)
+set_property(TEST day_3a PROPERTY PASS_REGULAR_EXPRESSION "8153" )

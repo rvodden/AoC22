@@ -1,15 +1,7 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
+#include <string>
 #include "day_2b.hpp"
+#include "main.hpp"
 
-int main() {
-    std::ifstream t("input.txt");
-    std::stringstream buffer;
-    buffer << t.rdbuf();
-
-    std::cout << aoc::day_2b(buffer.str()) << std::endl;
-
-    return 0;
+int day_function(const std::string &input) {
+    return aoc::day_2b(input);
 }

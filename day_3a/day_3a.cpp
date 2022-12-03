@@ -22,9 +22,6 @@ int process_line(const std::string_view &inventory) {
     std::string_view first_compartment = inventory.substr(0, middle);
     std::string_view second_compartment = inventory.substr(middle);
 
-    std::cout << first_compartment << std::endl;
-    std::cout << second_compartment << std::endl;
-
     for ( char character : first_compartment ) {
         auto loc = second_compartment.find(character);
         if (loc != std::string::npos)

@@ -20,6 +20,7 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 enable_testing()
 
+add_subdirectory(common)
 add_subdirectory(day_1a)
 add_subdirectory(day_1b)
 add_subdirectory(day_2a)
