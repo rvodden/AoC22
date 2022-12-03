@@ -1,17 +1,7 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
+#include <string>
+#include "main.hpp"
 #include "day_1b.hpp"
 
-int main() {
-    std::ifstream t("input.txt");
-    std::stringstream buffer;
-    buffer << t.rdbuf();
-
-    aoc::CalorieCounter calorie_counter;
-
-    std::cout << calorie_counter.day_1(buffer.str()) << std::endl;
-
-    return 0;
+int day_function(const std::string &input) {
+    return aoc::day_1b(input);
 }

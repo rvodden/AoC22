@@ -22,8 +22,7 @@ const std::string example = R"EOS(1000
 
 TEST(Day1aTest, Example) {
 
-    aoc::CalorieCounter calorie_counter;
-    EXPECT_EQ(calorie_counter.day_1(example), 24000);
+    EXPECT_EQ(aoc::day_1a(example), 24000);
 
 };
 
