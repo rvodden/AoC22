@@ -24,6 +24,8 @@ add_subdirectory(day_1a)
 add_subdirectory(day_1b)
 add_subdirectory(day_2a)
 add_subdirectory(day_2b)
+add_subdirectory(day_3a)
+add_subdirectory(day_3b)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Coverage")
     include(CodeCoverage)
