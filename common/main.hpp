@@ -1,3 +1,4 @@
 #include <string>
+#include <variant>
 
-int day_function(const std::string &);
+std::variant<int, std::string> day_function(const std::string &);
