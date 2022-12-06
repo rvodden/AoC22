@@ -1,4 +1,4 @@
-name: SonarCloud
+name: SonarCloud (C++)
 on:
   push:
     branches:
@@ -6,8 +6,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
-  build:
-    name: Build and analyze
+  build_cpp:
+    name: Build and Analyze (C++)
     runs-on: ubuntu-latest
     env:
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
@@ -31,6 +31,7 @@ jobs:
           pip install gcovr==5.0 
       - name: Run build-wrapper
         run: |
+          pushd c++
           mkdir -p build
           cmake -S . -B build/ -DCMAKE_BUILD_TYPE=Coverage
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/
@@ -38,9 +39,40 @@ jobs:
           ctest
           popd
           cmake --build build/ -- coverage
+          popd
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" -Dsonar.organization=rvodden-github -Dsonar.projectKey=rvodden_AoC22 -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.coverageReportPaths=build/coverage.xml
+          pushd c++
+          sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" -Dsonar.organization=rvodden-github -Dsonar.projectKey=rvodden-github_AoC22-cpp -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.coverageReportPaths=build/coverage.xml
+          popd
+  build_python:
+    name: Build and Analyse (Python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11.0
+      - name: Run Tests
+        run: |
+          pushd python
+          pip install -r requirements.txt
+          pytest --cov --cov-report xml
+          popd
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: python
+          args: >
+            -Dsonar.organization=rvodden-github
+            -Dsonar.projectKey=rvodden-github_AoC22-python
+            -Dsonar.python.coverage.reportPaths=coverage.xml 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

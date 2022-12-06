@@ -11,6 +11,6 @@ const std::string example{R"EOS(2-4,6-8
 6-6,4-6
 2-6,4-8)EOS"};
 
-TEST(Day4aTest, Example) {
+TEST(Day4bTest, Example) {
     EXPECT_EQ(aoc::day_4b(example), 4);
 }

@@ -55,6 +55,7 @@ endmacro()
 list( APPEND skip_directories cmake-* )
 list( APPEND skip_directories cmake )
 list( APPEND skip_directories build )
+list( APPEND skip_directories python )
 
 macro(subdir_list result curdir)
     file(GLOB children RELATIVE ${curdir} ${curdir}/*)
