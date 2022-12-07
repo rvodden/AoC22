@@ -1,4 +1,4 @@
-from aoc.day_01 import day_01a, day_01b
+from aoc.day01 import day_01a, day_01b
 
 EXAMPLE = """1000
 2000

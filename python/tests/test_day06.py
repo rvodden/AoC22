@@ -1,5 +1,5 @@
 import pytest
-from aoc.day_06 import day_06a, day_06b
+from aoc.day06 import day_06a, day_06b
 
 EXAMPLES = [("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 7),
     ("bvwbjplbgvbhsrlpgdmjqwftvncz", 5),

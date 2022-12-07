@@ -1,4 +1,4 @@
-from aoc.day_05 import day_05a, day_05b
+from aoc.day05 import day_05a, day_05b
 
 EXAMPLE="""    [D]    
 [N] [C]    

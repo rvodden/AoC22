@@ -1,4 +1,4 @@
-from aoc.day_04 import day_04a, day_04b
+from aoc.day04 import day_04a, day_04b
 
 EXAMPLE="""2-4,6-8
 2-3,4-5
