@@ -176,44 +176,27 @@ bool edge_of_the_world(const int &increment, const int &breadth, const int &dept
          (increment < -1 and y == 0 ));
 }
 
+template<typename T1, typename T2> //needs to cope with iterator and reverse_iterator
 int visibility(
-        const std::vector<char> &trees, 
-        std::vector<std::optional<int>> &visibilities, 
-        const int &breadth, const int &depth, 
-        const std::vector<char>::iterator &tree, 
+        const T1 &start_visibility, 
+        const T2 &start_tree, 
+        const T2 &end_tree, 
         const signed char increment){
-    auto t = tree;
-    auto idx = t - trees.begin();
-    auto v = visibilities.begin() + idx;
+    auto v = start_visibility;
 
     // if we already know the answer, then just return it
     if (v->has_value() ) return v->value();
 
-    auto [x, y] = dimensions(idx, breadth);
-    if ( edge_of_the_world(increment, breadth, depth, x, y) ) {
-        // we're looking off the edge of the world
-        *v = 0;
-        return 0;
-    } 
-    
+    auto t = start_tree;
     auto nt = t + increment;
-    idx += increment;
     int distance = 1;
 
-    auto dim = dimensions(idx, breadth);
-    x = dim.first; y = dim.second;
-    while ( *nt < *t and not edge_of_the_world(increment, breadth, depth, x, y)) { // the trees are shorter
+    while ( *nt < *t and nt < end_tree ) { // the trees are shorter
         distance++;
         nt += increment;
-        idx += increment;
-        dim = dimensions(idx, breadth);
-        x = dim.first; y = dim.second;
     }
+
     *v = distance;
-    return v->value();
-    
-    // one more that the value that neighbour has in that direction
-    *v = 1 + visibility(trees, visibilities, breadth, depth, nt, increment);
     return v->value();
 }
 
@@ -228,15 +211,61 @@ int part_b(const std::string &inventory) {
     const auto [NORTH, EAST, SOUTH, WEST] = std::make_tuple(0, 1, 2, 3);
     const auto [NORTH_INC, EAST_INC, SOUTH_INC, WEST_INC] = std::make_tuple(-breadth, 1, breadth, -1);
 
-
-    int idx = 0;
+    
     auto tree = trees.begin();
-    while ( tree != trees.end() ) {
-        visibility(trees, visibilities[NORTH], breadth, depth, tree, NORTH_INC);
-        visibility(trees, visibilities[EAST], breadth, depth, tree, EAST_INC);
-        visibility(trees, visibilities[SOUTH], breadth, depth, tree, SOUTH_INC);
-        visibility(trees, visibilities[WEST], breadth, depth, tree, WEST_INC);
-        idx++; tree++;
+    auto vs = visibilities[SOUTH].begin();
+    auto ve = visibilities[EAST].begin();
+    auto eowt = trees.begin() + breadth - 1;
+    for (int i = 0; i < depth; i++ ) {
+        auto sreowt = trees.end() - breadth;
+        for (int j = 0; j < breadth; j++) {
+            if ( i == depth - 1 )
+                *vs = 0;
+            if ( j == breadth - 1 )
+                *ve = 0;   
+            visibility(vs, tree, sreowt, SOUTH_INC);
+            visibility(ve, tree, eowt, EAST_INC);
+            tree++; vs++; ve++; sreowt++;
+        }
+        eowt += breadth;
+    }
+
+    auto rtree = trees.rbegin();
+    auto vn = visibilities[NORTH].rbegin();
+    auto vw = visibilities[WEST].rbegin();
+    auto reowt = trees.rbegin() + breadth - 1;
+    for (int i = 0; i < depth; i++ ) {
+        auto nreowt = trees.rend() - breadth;
+        for (int j = 0; j < breadth; j++) {
+            if ( i == depth - 1 )
+                *vn = 0;
+            if ( j == breadth - 1 )
+                *vw = 0;   
+            visibility(vn, rtree, nreowt, -NORTH_INC);
+            visibility(vw, rtree, reowt, -WEST_INC);
+            rtree++; vn++; vw++; nreowt++;
+        }
+        reowt += breadth;
+    }
+
+    for (int d : {
+        NORTH, 
+        EAST, 
+        SOUTH, 
+        WEST
+        }) {
+        auto v = visibilities[d].begin();
+        for (int i = 0; i < depth; i++) {
+            for (int j = 0; j < breadth; j++  ) {
+                if (v->has_value()) 
+                    std::cout << v->value() << " "; 
+                else 
+                    std::cout << '-' << " ";
+                v++;
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
     }
 
     int max = 0;
@@ -252,25 +281,6 @@ int part_b(const std::string &inventory) {
         n++; e++; s++; w++;
     }
 
-    for (int d : {
-        NORTH, 
-        EAST, 
-        SOUTH, 
-        WEST
-        }) {
-        auto v = visibilities[d].begin();
-        for (int i = 0; i < depth; i++) {
-            for (int j = 0; j < breadth; j++  ) {
-                if (v->has_value()) 
-                    std::cout << v->value(); 
-                else 
-                    std::cout << '-';
-                v++;
-            }
-            std::cout << std::endl;
-        }
-        std::cout << std::endl;
-    }
     return max;
 }
 
