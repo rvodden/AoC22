@@ -47,6 +47,7 @@ macro(standard_build)
     set(ExecutableName "${DirectoryName}")
     file(GLOB_RECURSE EXECUTABLE_SOURCE_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
     add_executable(${ExecutableName} ${EXECUTABLE_SOURCE_FILES})
+    target_link_libraries(${ExecutableName} PRIVATE compiler_flags)
     target_link_libraries(${ExecutableName} PUBLIC ${LibraryName})
     target_link_libraries(${ExecutableName} PUBLIC lib_common)
 
