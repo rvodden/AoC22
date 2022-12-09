@@ -248,26 +248,6 @@ int part_b(const std::string &inventory) {
         reowt += breadth;
     }
 
-    for (int d : {
-        NORTH, 
-        EAST, 
-        SOUTH, 
-        WEST
-        }) {
-        auto v = visibilities[d].begin();
-        for (int i = 0; i < depth; i++) {
-            for (int j = 0; j < breadth; j++  ) {
-                if (v->has_value()) 
-                    std::cout << v->value() << " "; 
-                else 
-                    std::cout << '-' << " ";
-                v++;
-            }
-            std::cout << std::endl;
-        }
-        std::cout << std::endl;
-    }
-
     int max = 0;
     auto n = visibilities[NORTH].begin();
     auto e = visibilities[EAST].begin();
@@ -276,7 +256,6 @@ int part_b(const std::string &inventory) {
 
     while (n != visibilities[NORTH].end()) {
         int v = n->value() * e->value() * s->value() * w->value();
-        // std::cout << v << std::endl;
         max = std::max(max, v);       
         n++; e++; s++; w++;
     }
