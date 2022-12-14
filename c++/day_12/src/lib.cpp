@@ -99,9 +99,6 @@ int part_a(const std::string &inventory) {
     Location start = o_start.value();
     Location end = o_end.value();
 
-    // std::cout << "(" << start.first << "," << start.second << ")" << std::endl;
-    // std::cout << "(" << end.first << "," << end.second << ")" << std::endl;
-
     // overwrite the start and end pointers so we're in a solvable place
     heights[start.second][start.first] = 'a';
     heights[end.second][end.first] = 'z';
@@ -122,23 +119,14 @@ int part_a(const std::string &inventory) {
     distance[current] = 0;
     while (unvisited.size() != 0) {
         
-        // std::cout << "(" << current.first << "," << current.second << ")" << std::endl;
-        // std::cout << unvisited.size() << std::endl;
         auto neighbours = unvisited_neighbours(breadth, depth, unvisited, current);
-        // if ( neighbours.size() == 0 ) {
-        //     std::cout << "STUCK!" << std::endl;
-        //     break;
-        // }
 
         for ( auto l : neighbours ) {
-            // std::cout << "(" << l.first << "," << l.second << ")" << std::endl;
-            
             // potention non-termination when unvisted isn't empty, but no nodes are traversable
             if ( heights[l.second][l.first] - heights[current.second][current.first] > 1 ) continue;
             
             distance[l] = std::min((int)distance[l], distance[current] + 1);
         }
-        // std::cout << std::endl;
 
         auto m = std::find(unvisited.begin(), unvisited.end(), current);
         if (m != unvisited.end()) unvisited.erase(m);
@@ -182,9 +170,6 @@ int part_b(const std::string &inventory) {
     Location start = o_start.value();
     Location end = o_end.value();
 
-    // std::cout << "(" << start.first << "," << start.second << ")" << std::endl;
-    // std::cout << "(" << end.first << "," << end.second << ")" << std::endl;
-
     // overwrite the start and end pointers so we're in a solvable place
     char z = 'z';
     char a = 'a';
@@ -207,36 +192,23 @@ int part_b(const std::string &inventory) {
     distance[current] = 0;
     while (unvisited.size() != 0) {
         
-        // std::cout << "(" << current.first << "," << current.second << ")" << std::endl;
-        // std::cout << unvisited.size() << std::endl;
         auto neighbours = unvisited_neighbours(breadth, depth, unvisited, current);
-        // if ( neighbours.size() == 0 ) {
-        //     std::cout << "STUCK!" << std::endl;
-        //     break;
-        // }
 
         if ( distance[current] == std::numeric_limits<int>::max() ) {
-            std::cout << "UNREACHABLE!" << std::endl;
-            break;
+            break; // unreachable
         }
 
         for ( auto l : neighbours ) {
-            // std::cout << "(" << l.first << "," << l.second << ")" << std::endl;
-            
-            // potention non-termination when unvisted isn't empty, but no nodes are traversable
             int height_difference = heights[current.second][current.first] - heights[l.second][l.first];
             if ( height_difference > 1 ) continue;
 
             distance[l] = std::min((int)distance[l], distance[current] + 1);
         }
-        // std::cout << std::endl;
 
         auto m = std::find(unvisited.begin(), unvisited.end(), current);
         if (m != unvisited.end()) unvisited.erase(m);
         current = unvisited_node_with_lowest_distance(distance, unvisited);
     }
-
-    // std::cout << unvisited.size() << std::endl;
 
     int min_d = std::numeric_limits<int>::max();
     for(int y_ = 0; y_ < depth; y_++) {

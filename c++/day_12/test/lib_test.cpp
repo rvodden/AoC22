@@ -10,7 +10,7 @@ accszExk
 acctuvwj
 abdefghi)EOS"};
 
-TEST(day_12a, DISABLED_example) {
+TEST(day_12a, example) {
     EXPECT_EQ(aoc::part_a(example), 31);
 }
 
