@@ -16,6 +16,12 @@ namespace aoc {
 using Matrix = std::vector<std::vector<char>>;
 using Location = std::pair<int, int>;
 
+struct LocationHash {
+    inline std::size_t operator()(const std::pair<int,int> & v) const {
+        return v.first*31+v.second;
+    }
+};
+
 void erase_if(std::set<Location>& c, std::function<bool(const Location&)> pred) {
     for (auto it{c.begin()}, end{c.end()}; it != end; ) {
         if (pred(*it)) {
@@ -52,7 +58,7 @@ std::set<Location> unvisited_neighbours(const int &breadth, const int &depth, co
     return retval;
 }
 
-Location unvisited_node_with_lowest_distance(const std::map<Location, int> &distance, const std::set<Location> &unvisited ) {
+Location unvisited_node_with_lowest_distance(const std::unordered_map<Location, int, LocationHash> &distance, const std::set<Location> &unvisited ) {
     int d = std::numeric_limits<int>::max();
     Location min_l;
     for (auto l : unvisited) {
@@ -107,7 +113,7 @@ int part_a(const std::string &inventory) {
     int breadth = heights.front().size();
 
     std::set<Location> unvisited;
-    std::map<Location, int> distance;
+    std::unordered_map<Location, int, LocationHash> distance;
     for(int y_ = 0; y_ < depth; y_++) {
         for(int x_ = 0; x_ < breadth; x_++) {
            unvisited.insert({x_, y_});
@@ -180,7 +186,7 @@ int part_b(const std::string &inventory) {
     int breadth = heights.front().size();
 
     std::set<Location> unvisited;
-    std::map<Location, int> distance;
+    std::unordered_map<Location, int, LocationHash> distance;
     for(int y_ = 0; y_ < depth; y_++) {
         for(int x_ = 0; x_ < breadth; x_++) {
            unvisited.insert({x_, y_});

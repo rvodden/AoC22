@@ -1,0 +1,30 @@
+#include <string>
+#include <gtest/gtest.h>
+
+
+#include "lib.hpp"
+
+const std::string example(R"EOS(Sensor at x=2, y=18: closest beacon is at x=-2, y=15
+Sensor at x=9, y=16: closest beacon is at x=10, y=16
+Sensor at x=13, y=2: closest beacon is at x=15, y=3
+Sensor at x=12, y=14: closest beacon is at x=10, y=16
+Sensor at x=10, y=20: closest beacon is at x=10, y=16
+Sensor at x=14, y=17: closest beacon is at x=10, y=16
+Sensor at x=8, y=7: closest beacon is at x=2, y=10
+Sensor at x=2, y=0: closest beacon is at x=2, y=10
+Sensor at x=0, y=11: closest beacon is at x=2, y=10
+Sensor at x=20, y=14: closest beacon is at x=25, y=17
+Sensor at x=17, y=20: closest beacon is at x=21, y=22
+Sensor at x=16, y=7: closest beacon is at x=15, y=3
+Sensor at x=14, y=3: closest beacon is at x=15, y=3
+Sensor at x=20, y=1: closest beacon is at x=15, y=3
+)EOS");
+
+TEST(day_15a, example) {
+    // EXPECT_EQ(aoc::part_a(example1), 0);
+    EXPECT_EQ(aoc::count_beacon_slots(example, 10), 26);
+}
+
+TEST(day_15b, example) {
+    EXPECT_EQ(aoc::find_tuning_frequency(example, 20), 56000011);
+}

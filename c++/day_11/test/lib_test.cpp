@@ -30,13 +30,15 @@ Monkey 3:
   Operation: new = old + 3
   Test: divisible by 17
     If true: throw to monkey 0
-    If false: throw to monkey 1)EOS");
+    If false: throw to monkey 1
+
+)EOS");
 
 TEST(day_11a, example) {
     // EXPECT_EQ(aoc::part_a(example1), 0);
     EXPECT_EQ(aoc::part_a(example), 10605);
 }
 
-TEST(day_11b, DISABLED_example) {
+TEST(day_11b, example) {
     EXPECT_EQ(aoc::part_b(example), "");
 }

@@ -12,16 +12,6 @@
 
 namespace aoc {
 
-class Monkey {
-  public:
-    std::vector<int> items;
-    std::function<int(const int&)> opp;
-    std::function<bool(const int&)> test;
-
-    int monkey_if_true;
-    int monkey_if_false;
-};
-
 std::stringstream& getlines(std::stringstream &stream, std::vector<std::string> &lines, const int &number_of_lines) {
     lines.clear();
     int n = number_of_lines;
@@ -67,7 +57,7 @@ Monkey parse_monkey(std::vector<std::string> lines) {
 
     // read test
     int divisor = std::stoi(lines[3].substr(21));
-    monkey.test = [divisor](int x){ return x % divisor; };
+    monkey.test = [divisor](int x){ return (x % divisor) == 0; };
 
     // read destinations;
     monkey.monkey_if_true = std::stoi(lines[4].substr(29));
@@ -80,19 +70,37 @@ int part_a(const std::string &inventory) {
     std::stringstream stream(inventory);
     std::vector<std::string> lines;
     std::vector<Monkey> monkeys;
+    
     Monkey monkey;
+    
     while (getlines(stream, lines, 7)) {
         monkey = parse_monkey(lines);
         monkeys.push_back(monkey);
-    }
-    getlines(stream, lines, 7);
-    monkey = parse_monkey(lines);
-    monkeys.push_back(monkey);
+    }    
 
-    for(auto m : monkeys) {
-        std::cout << m.items[0] << std::endl;
+    for (int i = 0; i < 20; i++) {
+        for(Monkey &monkey : monkeys) {
+            for( auto item = monkey.items.begin(); item < monkey.items.end(); item++ ) {
+                *item = monkey.opp(*item);
+                *item /= 3;
+                if ( monkey.test(*item) ) {
+                    monkeys[monkey.monkey_if_true].items.emplace_back(*item);
+                } else {
+                    monkeys[monkey.monkey_if_false].items.emplace_back(*item);
+                }
+                monkey.count++;
+            } 
+            monkey.items.clear();
+        }
     }
-    return 0;
+
+    std::vector<int> counts;
+    for(Monkey monkey : monkeys) {
+        counts.push_back(monkey.count);
+    }
+    std::sort(counts.rbegin(), counts.rend());
+
+    return counts[0] * counts[1];
 }
 
 std::string part_b(const std::string &inventory) {

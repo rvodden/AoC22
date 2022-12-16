@@ -50,6 +50,11 @@ elseif (USE_SANITIZER STREQUAL "Undefined")
     target_link_options(compiler_flags INTERFACE "-fsanitize=undefined")
 endif()
 
+if (USE_GPROF)
+    target_compile_options(compiler_flags INTERFACE "-pg")
+    target_link_options(compiler_flags INTERFACE "-pg")
+endif()
+
 
 subdir_list(SUBDIRS ${MY_CURRENT_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 foreach(subdir ${SUBDIRS})
