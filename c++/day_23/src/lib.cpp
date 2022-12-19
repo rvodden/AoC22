@@ -170,7 +170,8 @@ int part_b(const std::string &input) {
 
     State state(map);
 
-    int64_t i = 1;
+    uint64_t i = 1;
+    uint64_t hash;
     while(state.move()) {
         state.rotate_rules();
         i++;
