@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <ranges>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -47,13 +48,13 @@ int day_3a(const std::string &inventory) {
 
 int process_group(std::string elf1, std::string elf2, std::string elf3) {
     
-    std::sort(elf1.begin(), elf1.end());
-    std::sort(elf2.begin(), elf2.end());
-    std::sort(elf3.begin(), elf3.end());
+    std::ranges::sort(elf1.begin(), elf1.end());
+    std::ranges::sort(elf2.begin(), elf2.end());
+    std::ranges::sort(elf3.begin(), elf3.end());
 
     std::vector<char> e1e2intersection;
 
-    std::set_intersection(
+    std::ranges::set_intersection(
         elf1.begin(), elf1.end(),
         elf2.begin(), elf2.end(),
         std::back_inserter(e1e2intersection)
@@ -61,7 +62,7 @@ int process_group(std::string elf1, std::string elf2, std::string elf3) {
 
     std::vector<char> e1e2e3intersection;
 
-    std::set_intersection(
+    std::ranges::set_intersection(
         e1e2intersection.begin(), e1e2intersection.end(),
         elf3.begin(), elf3.end(),
         std::back_inserter(e1e2e3intersection)

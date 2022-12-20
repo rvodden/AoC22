@@ -55,9 +55,8 @@ int part_a(const std::string &inventory) {
 
         for (int i = 0; i < quantity; i++) {
             head = head + direction; // consider overriding +=
-            location delta = tail - head;
 
-            if(!adjacent(delta))
+            if(location delta = tail - head; !adjacent(delta))
                 tail = tail - normalise(delta);
             locations_tail_has_visited.insert(tail);
         }
