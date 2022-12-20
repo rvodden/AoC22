@@ -14,7 +14,9 @@ macro(standard_build)
     foreach(SOURCE_FILE ${SOURCE_FILES})
         message("   Adding source file: ${SOURCE_FILE}")
     endforeach()
+    
     add_library(${LibraryName} SHARED ${SOURCE_FILES})
+    set_target_properties(${LibrarName} PROPERTIES OUTPUT_NAME "${DirectoryName}")
 
     target_link_libraries(${LibraryName} PRIVATE compiler_flags)
     target_include_directories(${LibraryName} INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src> $<INSTALL_INTERFACE:include>)
@@ -51,6 +53,10 @@ macro(standard_build)
     target_link_libraries(${ExecutableName} PUBLIC ${LibraryName})
     target_link_libraries(${ExecutableName} PUBLIC lib_common)
 
+    ## Meta Target
+
+    set(MetaTargetName "${DirectoryName}_all")
+    add_custom_target("${MetaTargetName}" DEPENDS "${ExecutableName}" "${TestName}" COMMENT "Builds all the binaries associated with ${DirectoryName}")
 endmacro()
 
 list( APPEND skip_directories cmake-* )

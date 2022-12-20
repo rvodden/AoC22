@@ -59,15 +59,15 @@ void parse_inventory(
         const std::string &inventory
 ) {
     std::stringstream stream(inventory);
-    std::string line, number;
+    std::string line;
+    std::string number;
     std::array<int, 3> numbers;
-    Location location;
     while(std::getline(stream, line)) {
         if(line == "") continue;
         auto s = line.begin();
         for(int i = 0; i < 3; i++) {
             auto t = std::find(s, line.end(), ',');
-            number = std::string_view(s, t);
+            number = std::string(s, t);
             numbers[i] = std::stoi(number);
             s = t + 1;
         }
