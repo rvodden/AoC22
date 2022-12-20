@@ -59,6 +59,14 @@ macro(standard_build)
     add_custom_target("${MetaTargetName}" DEPENDS "${ExecutableName}" "${TestName}" COMMENT "Builds all the binaries associated with ${DirectoryName}")
 endmacro()
 
+macro(add_standard_test prefix result)
+
+set(TestName "${DirectoryName}${prefix}.command")
+add_test(NAME "${TestName}" COMMAND ${DirectoryName} ${CMAKE_CURRENT_LIST_DIR}/input.txt)
+set_property(TEST "${TestName}" PROPERTY PASS_REGULAR_EXPRESSION "${result}")
+endmacro()
+
+
 list( APPEND skip_directories cmake-* )
 list( APPEND skip_directories cmake )
 list( APPEND skip_directories build )

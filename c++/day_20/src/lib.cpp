@@ -25,8 +25,7 @@ std::ostream &operator<< (std::ostream &s, const std::pair<int, bool> &v) {
 
 std::ostream &operator<< (std::ostream &s, const std::list<std::pair<int64_t, bool>> &l) {
     for(const auto &[v, i] : l) {
-        // s << "(" << v << "," << ( i ? "true" | "false" ) << ")";
-        s << v << ",";
+        s << "(" << v << "," << i << ")";
     }
     return s;
 }
