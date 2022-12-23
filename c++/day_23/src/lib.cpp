@@ -1,10 +1,13 @@
-#include <stdexcept>
+#include <array>
+#include <algorithm>
 #include <iostream>
 #include <limits>
+#include <ranges>
+#include <regex>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <variant>
-#include <regex>
 
 #include "lib.hpp"
 

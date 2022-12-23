@@ -1,7 +1,9 @@
 #include <algorithm>
+#include <array>
 #include <regex>
 #include <map>
 #include <iostream>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <vector>

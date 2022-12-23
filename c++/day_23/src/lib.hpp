@@ -44,7 +44,6 @@ struct PairHash {
     }
 };
 
-
 using Map = std::unordered_set<Location, PairHash>;
 
 bool operator==(const Location &l, const Location &r);

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <map>
 #include <numeric>
+#include <optional>
 #include <regex>
 #include <set>
 #include <sstream>
