@@ -1,8 +1,11 @@
+#include <algorithm>
 #include <stdexcept>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <variant>
+#include <ranges>
 #include <regex>
 
 #include "lib.hpp"
@@ -24,16 +27,20 @@ Orientation& operator++(Orientation &o) {
 std::ostream& operator<<(std::ostream& s, const Orientation &l) {
     switch(l) {
         case Orientation::RIGHT:
-            s << "▶";
+            // s << "▶";
+            s << "Right";
             break;
         case Orientation::DOWN:
-            s << "▼";
+            // s << "▼";
+            s << "Down";
             break;
         case Orientation::LEFT:
-            s << "◀";
+            // s << "◀";
+            s << "Left";
             break;
         case Orientation::UP:
-            s << "▲";
+            // s << "▲";
+            s << "Up";
             break;
         default:
             std::cout << (int)l << std::endl;
@@ -61,7 +68,19 @@ Location& operator+=(Location &l, const Location &r) {
 };
 
 std::ostream& operator<<(std::ostream& s, const Location &l) {
-    s << "(" << l.first << "," << l.second << ")";
+    s << "(" << l.first << ", " << l.second << ")";
+    return s;
+}
+
+std::ostream& operator<<(std::ostream& s, const Direction &d) {
+    switch(d) {
+        case Direction::LEFT:
+            s << "L";
+            break;
+        case Direction::RIGHT:
+            s << "R";
+            break;
+    }
     return s;
 }
 
@@ -91,7 +110,35 @@ Location _wrap_around(const Map &map, const Location &location, const Location &
 
 void State::wrap_around( const Location &delta ) {
     Location nl = _wrap_around(_map, _location, delta * -1);
-    if(_map.at(nl)) _location = nl; // check we're not headed into a wall;
+    if(_map.at(nl)) { // check we're not headed into a wall;
+        _location = nl;
+    }
+}
+
+void PartTwoState::wrap_around( const Location &delta ) {
+    auto nl = _wrap_around.at({_location, _orientation});
+    if(_map.at(nl.first)) {
+        _location = nl.first;
+        _orientation = nl.second;
+    };
+}
+
+std::ostream& operator<<(std::ostream& s, const Edge &e) {
+    switch(e) {
+        case Edge::EAST:
+            s << "EAST";
+            break;
+        case Edge::SOUTH:
+            s << "SOUTH";
+            break;
+        case Edge::NORTH:
+            s << "NORTH";
+            break;
+        case Edge::WEST:
+            s << "WEST";
+            break;
+    }
+    return s;
 }
 
 int64_t State::password() const {
@@ -255,41 +302,162 @@ int part_a(const std::string &input) {
     return password;
 }
 
+Orientation new_orientation(const Edge &destination) {
+    using enum Edge;
+    using enum Orientation;
+    switch(destination) {
+        case NORTH:
+            return DOWN;
+        case WEST:
+            return RIGHT;
+        case SOUTH:
+            return UP;
+        case EAST:
+            return LEFT;
+    }
+    __builtin_unreachable();
+}
+
+Orientation old_orientation(const Edge &destination) {
+    using enum Edge;
+    using enum Orientation;
+    switch(destination) {
+        case NORTH:
+            return UP;
+        case WEST:
+            return LEFT;
+        case SOUTH:
+            return DOWN;
+        case EAST:
+            return RIGHT;
+    }
+    __builtin_unreachable();
+}
+/**
+ * Returns the minimum and maximum x and y co-ordinates of an edge, given the two corners of a face.
+ * 
+ * { {min_x, max_x}, {min_y, max_y}}
+*/
+Range edge_range(const Range &extent, const Edge &edge, const Bearing &bearing) {
+    using enum aoc::Edge;
+    using enum aoc::Bearing;
+    switch(edge) {
+        case NORTH:
+            if(bearing == ASCENDING)
+                return {{ extent.first.first, extent.second.first }, {extent.first.second, extent.first.second}};
+            return {{ extent.second.first, extent.first.first }, {extent.first.second, extent.first.second}};
+        case EAST:
+            if(bearing == ASCENDING)
+                return {{ extent.second.first, extent.second.first }, {extent.first.second, extent.second.second}};
+            return {{ extent.second.first, extent.second.first}, {extent.second.second, extent.first.second}};
+        case SOUTH:
+            if(bearing == ASCENDING)
+                return {{ extent.first.first, extent.second.first }, {extent.second.second, extent.second.second}};
+            return {{ extent.second.first, extent.first.first }, {extent.second.second, extent.second.second}};
+        case WEST:
+            if(bearing == ASCENDING)
+                return {{ extent.first.first, extent.first.first}, {extent.first.second, extent.second.second}};
+            return {{ extent.first.first, extent.first.first}, {extent.second.second, extent.first.second}};
+    }
+    __builtin_unreachable(); // nuke the compiler warning (yuck)
+}
+
 void generate_edge_mappings(const Net &net, const NetScaling &net_scaling, WrapAround &wrap_around) {
     for(auto &[source, destination] : net) {
         auto &[source_face, source_edge, source_bearing] = source;
         auto &[destination_face, destination_edge, destination_bearing] = destination;
 
         int64_t source_begin_x, source_end_x, source_begin_y, source_end_y;     
-        if(source_bearing == Bearing::ASCENDING) {
-            source_begin_x = net_scaling[source_face].first.first;
-            source_end_x = net_scaling[source_face].second.first;
-            source_begin_y = net_scaling[source_face].first.second;
-            source_end_y = net_scaling[source_face].second.second;
-        } else {
-            source_begin_x = net_scaling[source_face].second.first;
-            source_end_x = net_scaling[source_face].first.first;
-            source_begin_y = net_scaling[source_face].second.second;
-            source_end_y = net_scaling[source_face].first.second;
-        }
-        
+        const auto &[xrange, yrange] = edge_range(net_scaling.at(source_face), source_edge, source_bearing);
+        source_begin_x = xrange.first;
+        source_end_x = xrange.second;
+        source_begin_y = yrange.first;
+        source_end_y = yrange.second;
+
         int64_t destination_begin_x, destination_end_x, destination_begin_y, destination_end_y;     
-        if(destination_bearing == Bearing::ASCENDING) {
-            destination_begin_x = net_scaling[destination_face].first.first;
-            destination_end_x = net_scaling[destination_face].second.first;
-            destination_begin_y = net_scaling[destination_face].first.second;
-            destination_end_y = net_scaling[destination_face].second.second;
-        } else {
-            destination_begin_x = net_scaling[destination_face].second.first;
-            destination_end_x = net_scaling[destination_face].first.first;
-            destination_begin_y = net_scaling[destination_face].second.second;
-            destination_end_y = net_scaling[destination_face].first.second;
+        const auto &[x_range, y_range] = edge_range(net_scaling.at(destination_face), destination_edge, destination_bearing);
+        destination_begin_x = x_range.first;
+        destination_end_x = x_range.second;
+        destination_begin_y = y_range.first;
+        destination_end_y = y_range.second;
+
+        std::cout << "Map face " << +source_face << " edge " << source_edge << " to face " << +destination_face << " edge " << destination_edge << std::endl;
+        std::cout << source_begin_x << " - " << source_end_x << " to " << destination_begin_x << " - " << destination_end_x << std::endl;
+        std::cout << source_begin_y << " - " << source_end_y << " to " << destination_begin_y << " - " << destination_end_y << std::endl;
+        std::cout << std::endl;
+
+        const auto& delta = [](const int64_t &begin, const int64_t &end) { 
+            if (end > begin) return 1;
+            if (end == begin) return 0;
+            return -1;
+        };
+
+        auto source_delta_x = delta(source_begin_x, source_end_x);
+        auto source_delta_y = delta(source_begin_y, source_end_y);
+        auto destination_delta_x = delta(destination_begin_x, destination_end_x);
+        auto destination_delta_y = delta(destination_begin_y, destination_end_y);
+
+        auto sx = source_begin_x;
+        auto dx = destination_begin_x;
+        auto sy = source_begin_y;
+        auto dy = destination_begin_y;
+
+        const auto& abs = [](int i){return std::abs(i);};
+
+        const auto &abs_values = std::vector {source_begin_x - source_end_x,
+            source_begin_y - source_end_y,
+            destination_begin_x - destination_end_x,
+            destination_begin_y - destination_end_y} | std::views::transform(abs);
+        
+        // for(const auto &i : abs_values) {
+        //     std::cout << i << std::endl;
+        // }
+
+        const auto &loops = std::ranges::max(abs_values);
+
+        // std::cout << "loops: " << loops << std::endl;
+        for( int i = 0; i <= loops; i++ ) {
+            std::cout << "(" << sx << "," << sy << ") <-> (" << dx << "," << dy << ")" << std::endl;
+            wrap_around[{{sx, sy}, old_orientation(source_edge)}] = {{dx, dy}, new_orientation(destination_edge)};
+            wrap_around[{{dx, dy}, old_orientation(destination_edge)}] = {{sx, sy}, new_orientation(source_edge)};
+            sx += source_delta_x;
+            sy += source_delta_y;
+            dx += destination_delta_x;
+            dy += destination_delta_y;
         }
     }
 }
 
-int part_b(const std::string &input) {
-    return 0;
+int64_t calculate_cube_journey(const std::string &input, const Net &net, const NetScaling &net_scaling) {
+    WrapAround wrap_around;
+    generate_edge_mappings(net, net_scaling, wrap_around);
+
+    Map map;
+    Route route;
+    parse_input(map, route, input);
+
+    PartTwoState state(map, wrap_around);
+
+    while( !route.empty() ) {
+        Step step = route.front();
+        route.pop();
+        if(std::holds_alternative<int64_t>(step)) {
+            state.move(std::get<int64_t>(step));
+            std::cout << state.get_position().first << " " << state.get_position().second << " " << std::get<int64_t>(step) << std::endl;
+        } else {
+            state.turn(std::get<Direction>(step));
+            std::cout << std::get<Direction>(step) << std::endl;
+        }
+    };
+
+    int64_t password = state.password();
+    std::cout << password << std::endl;
+
+    return password;
+}
+
+int64_t part_b(const std::string &input) {
+    return calculate_cube_journey(input, INPUT_NET, INPUT_NET_SCALING);
 }
 
 } // namespace aoc

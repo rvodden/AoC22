@@ -5,7 +5,6 @@ cmake_policy(SET CMP0135 NEW)
 
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 set(CMAKE_CXX_STANDARD 20)
 
 include(StandardBuild)
@@ -19,9 +18,11 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(googletest)
-
 include(GoogleTest)
 enable_testing()
+
+find_program(iwyu_path NAMES include-what-you-use iwyu REQUIRED)
+set(CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
 
 add_library(compiler_flags INTERFACE)
 target_compile_features(compiler_flags INTERFACE cxx_std_20)
