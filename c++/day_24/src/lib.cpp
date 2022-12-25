@@ -177,7 +177,6 @@ TemporalStepSet next_steps(const State &state, const TemporalLocation &location)
         if (state.map.contains(next_step)) continue; // cannot sit on a blizzard;
         next_steps.insert({next_step, location.second + 1});
     }
-    next_steps.insert({ location.first, location.second + 1 });
     return next_steps;
 }
 
@@ -210,14 +209,12 @@ int64_t path_length(const std::vector<State> &states, const int64_t &loop, const
     gscore[start] = 0;
     int64_t answer = -1;
 
+
     while(!open_set.empty()) {
         auto current = open_set.top();
         int64_t state_number = current.second % loop;
         if( state_number < 0 ) state_number += loop;
         const auto &current_state = states.at(state_number);
-
-        std::cout << "Step " << current.second << ": " << std::endl;
-        current_state.print_map(current.first);
 
         if(current.first == destination) {
             // current_state.print_map(current.first);
@@ -231,6 +228,10 @@ int64_t path_length(const std::vector<State> &states, const int64_t &loop, const
             if (gscore.get(current) + 1 < gscore.get(neighbour) ) { // if its easier to get to the next_step via current
                 previous_step[neighbour] = current;
                 gscore[neighbour] = gscore.get(current) + 1;
+                
+                std::cout << "Step " << neighbour.second << ": " << std::endl;
+                current_state.print_map(neighbour.first);
+
                 open_set.push(neighbour);
             }
         }
@@ -242,8 +243,8 @@ void calculate_states(std::vector<State> &states, int64_t &loop, const State &st
     State local_state = state;
     loop = std::lcm(state.extents.first, state.extents.second);
     for ( int64_t i = 0; i < loop; i++) {
-        states.push_back(local_state);
         local_state.move();
+        states.push_back(local_state);
     }
 }
 
@@ -257,7 +258,7 @@ int part_a(const std::string &input) {
     int64_t loop;
     calculate_states(states, loop, state);
     
-    TemporalLocation start = {{1,0}, 1};
+    TemporalLocation start = {{1,0}, 0};
     Location destination = extents + Location {-2,-1};
     int64_t answer = path_length(states, loop, start, destination);
 
