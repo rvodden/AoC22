@@ -35,10 +35,9 @@ Monkey 3:
 )EOS");
 
 TEST(day_11a, example) {
-    // EXPECT_EQ(aoc::part_a(example1), 0);
     EXPECT_EQ(aoc::part_a(example), 10605);
 }
 
 TEST(day_11b, example) {
-    EXPECT_EQ(aoc::part_b(example), "");
+    EXPECT_EQ(aoc::part_b(example), 2713310158);
 }
